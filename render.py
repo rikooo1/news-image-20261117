@@ -105,9 +105,18 @@ def lead_image(i, w, h):
     p = os.path.join(ASSET, f"lead{i+1}.png")
     if os.path.exists(p):
         im = Image.open(p).convert("RGB")
-        im.thumbnail((w, h))
+        # trim the fal.ai cream margin so the drawing itself fills the box
+        from PIL import ImageChops
+        bg = Image.new("RGB", im.size, PAPER)
+        bbox = ImageChops.difference(im, bg).getbbox()
+        if bbox:
+            pad = 8
+            bbox = (max(0, bbox[0]-pad), max(0, bbox[1]-pad),
+                    min(im.width, bbox[2]+pad), min(im.height, bbox[3]+pad))
+            im = im.crop(bbox)
+        im.thumbnail((w, h), Image.Resampling.LANCZOS)
         canvas = Image.new("RGB", (w, h), PAPER)
-        canvas.paste(im, ((w-im.width)//2, (h-im.height)//2))
+        canvas.paste(im, ((w - im.width) // 2, (h - im.height) // 2))
         return canvas
     return fallback_lead(i, w, h)
 
