@@ -6,7 +6,6 @@ import { join } from 'node:path';
 
 const src = new URL('./entry.png', import.meta.url);
 const buf = readFileSync(src);
-// PNG signature + 1 MiB gate, so a bad asset fails loudly instead of silently.
 if (buf.length > 1024 * 1024) throw new Error('entry.png exceeds 1 MiB');
 if (buf.readUInt32BE(0) !== 0x89504e47) throw new Error('entry.png is not a PNG');
 const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';

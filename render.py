@@ -52,7 +52,6 @@ def center(s, f, y, fill=INK):
 def hline(y, x0=36, x1=W-36, fill=RULE, w=2):
     d.line([(x0, y), (x1, y)], fill=fill, width=w)
 
-# ---------- masthead ----------
 hline(12, w=3); hline(17, w=1)
 d.text((36, 24), "THE DAILY WORLD", font=F("lserifb", 22), fill=INK)
 d.text((36, 50), "FRONT PAGE  ·  WORLD NEWS", font=F("sansb", 12), fill=SOFT)
@@ -61,18 +60,13 @@ d.text((W-36-tw(right, F("sansb", 12)), 28), right, font=F("sansb", 12), fill=SO
 right2 = "ONE IMAGE  ·  ONE DAY"
 d.text((W-36-tw(right2, F("sansi", 12)), 46), right2, font=F("sansi", 12), fill=SOFT)
 hline(68, w=1)
-
-# ---------- giant date ----------
 center("TUESDAY", F("lserifb", 34), 76, INK)
 center("17 NOVEMBER 2026", F("lserifb", 62), 112, INK)
 hline(186, w=2)
-
-# ---------- strip ----------
 d.rectangle([36, 192, W-36, 216], fill=INK)
 strip = "18 STORIES   ·   6 CONTINENTS   ·   EVERY ITEM FROM TUESDAY 17 NOVEMBER"
 center(strip, F("sansb", 14), 197, PAPER)
 
-# ---------- stories data ----------
 LEADS = [
     ("01", "EUROPE / ASIA", "Kerch bridge struck again; road span falls into the sea",
      "A second day of attacks on the Crimea link. A road span collapsed into the strait; traffic halted. Kyiv and Moscow trade blame.", (36.5, 45.3)),
@@ -99,13 +93,11 @@ LIST = [
     ("18", "AFRICA", "UN: 2,230 civilian deaths in Sudan", (30.0, 15.0)),
 ]
 
-# ---------- lead illustrations ----------
 ASSET = os.path.join(os.path.dirname(__file__), "assets", "ni1117")
 def lead_image(i, w, h):
     p = os.path.join(ASSET, f"lead{i+1}.png")
     if os.path.exists(p):
         im = Image.open(p).convert("RGB")
-        # trim the fal.ai cream margin so the drawing itself fills the box
         from PIL import ImageChops
         bg = Image.new("RGB", im.size, PAPER)
         bbox = ImageChops.difference(im, bg).getbbox()
@@ -122,32 +114,30 @@ def lead_image(i, w, h):
 
 def fallback_lead(i, w, h):
     im = Image.new("RGB", (w, h), CREAM_DARK); dd = ImageDraw.Draw(im)
-    if i == 0:  # Kerch bridge
-        dd.rectangle([0, h*0.62, w, h], fill=(150, 175, 190))  # sea
-        dd.line([(0, h*0.5), (w, h*0.5)], fill=INK, width=5)  # deck
+    if i == 0:
+        dd.rectangle([0, h*0.62, w, h], fill=(150, 175, 190))
+        dd.line([(0, h*0.5), (w, h*0.5)], fill=INK, width=5)
         for x in range(20, w, 46):
             dd.line([(x, h*0.5), (x, h*0.72)], fill=INK, width=3)
-        # broken span
         dd.line([(w*0.45, h*0.5), (w*0.52, h*0.66)], fill=RED, width=5)
         dd.line([(w*0.58, h*0.5), (w*0.52, h*0.66)], fill=RED, width=5)
         dd.ellipse([w*0.47, h*0.36, w*0.57, h*0.46], outline=RED, width=3)
-    elif i == 1:  # Hormuz
+    elif i == 1:
         dd.rectangle([0, h*0.66, w, h], fill=(150, 175, 190))
-        dd.polygon([(w*0.2, h*0.66), (w*0.5, h*0.66), (w*0.44, h*0.56), (w*0.26, h*0.56)], fill=INK)  # tanker
+        dd.polygon([(w*0.2, h*0.66), (w*0.5, h*0.66), (w*0.44, h*0.56), (w*0.26, h*0.56)], fill=INK)
         dd.rectangle([w*0.3, h*0.5, w*0.36, h*0.56], fill=INK)
-        dd.polygon([(w*0.68, h*0.3), (w*0.8, h*0.34), (w*0.68, h*0.38)], fill=RED)  # drone
+        dd.polygon([(w*0.68, h*0.3), (w*0.8, h*0.34), (w*0.68, h*0.38)], fill=RED)
         dd.line([(w*0.8, h*0.34), (w*0.9, h*0.5)], fill=SOFT, width=2)
-        dd.arc([w*0.84, h*0.44, w*0.98, h*0.6], 200, 340, fill=BLUE, width=3)  # radar
-        dd.ellipse([w*0.55, h*0.74, w*0.6, h*0.79], outline=RED, width=2)  # mine
-    else:  # Quad summit
-        dd.rectangle([w*0.15, h*0.62, w*0.85, h*0.72], fill=INK)  # podium
+        dd.arc([w*0.84, h*0.44, w*0.98, h*0.6], 200, 340, fill=BLUE, width=3)
+        dd.ellipse([w*0.55, h*0.74, w*0.6, h*0.79], outline=RED, width=2)
+    else:
+        dd.rectangle([w*0.15, h*0.62, w*0.85, h*0.72], fill=INK)
         for k, fx in enumerate([0.25, 0.42, 0.58, 0.75]):
             dd.rectangle([w*fx, h*0.34, w*fx+16, h*0.46], fill=[BLUE, RED, SOFT, BLUE][k])
             dd.line([(w*fx, h*0.34), (w*fx, h*0.62)], fill=INK, width=2)
-        dd.polygon([(w*0.46, h*0.8), (w*0.54, h*0.8), (w*0.5, h*0.9)], fill=RED)  # mineral
+        dd.polygon([(w*0.46, h*0.8), (w*0.54, h*0.8), (w*0.5, h*0.9)], fill=RED)
     return im
 
-# ---------- three lead columns ----------
 colw = 312; gap = 14; x0 = 36; ytop = 226
 for i, (num, cont, head, body, _) in enumerate(LEADS):
     x = x0 + i * (colw + gap)
@@ -166,7 +156,6 @@ for i, (num, cont, head, body, _) in enumerate(LEADS):
     if i < 2:
         d.line([(x+colw+gap//2, ytop), (x+colw+gap//2, ytop+230)], fill=RULE, width=1)
 
-# ---------- world map ----------
 my = 486
 d.text((36, my), "WHERE IT HAPPENED", font=F("sansb", 15), fill=INK)
 d.text((W-36-tw("17 LOCATIONS  ·  ORIGINAL DRAWING", F("sansi", 11)), my+2),
@@ -177,14 +166,11 @@ def proj(lon, lat):
     x = MAPX0 + (lon + 180) / 360 * (MAPX1 - MAPX0)
     y = MAPY0 + (78 - lat) / 140 * (MAPY1 - MAPY0)
     return x, y
-# sea background for land/sea contrast
 d.rectangle([MAPX0, MAPY0, MAPX1, MAPY1], fill=(222, 230, 233))
-# graticule
 for lon in range(-150, 181, 30):
     x, _ = proj(lon, 0); d.line([(x, MAPY0), (x, MAPY1)], fill=CREAM_DARK, width=1)
 for lat in range(-60, 79, 30):
     _, y = proj(0, lat); d.line([(MAPX0, y), (MAPX1, y)], fill=CREAM_DARK, width=1)
-# simplified continents (lon,lat polygons) — original schematic
 CONT = {
  "NA": [(-168,66),(-140,70),(-120,72),(-90,72),(-70,62),(-55,50),(-65,44),(-75,38),(-81,31),(-97,26),(-105,20),(-95,16),(-83,9),(-100,18),(-117,33),(-125,42),(-130,55),(-152,60),(-168,66)],
  "SA": [(-80,9),(-62,10),(-50,0),(-35,-8),(-40,-20),(-58,-35),(-70,-52),(-72,-40),(-70,-18),(-78,-2),(-80,9)],
@@ -197,7 +183,6 @@ CONT = {
 for name, poly in CONT.items():
     pts = [proj(lo, la) for lo, la in poly]
     d.polygon(pts, fill=(206, 196, 172), outline=(90, 84, 72))
-# pins (with leader lines when crowded)
 allstories = [(n, c, pin) for n, c, _, _, pin in LEADS] + [(n, c, pin) for n, c, _, pin in LIST]
 placed = []
 nf = F("sansb", 9)
@@ -205,7 +190,6 @@ for num, cont, pin in allstories:
     if pin is None: continue
     x, y = proj(*pin)
     bx, by = x, y
-    # nudge badge away from already-placed badges
     for _ in range(24):
         if all(math.hypot(bx-px, by-py) >= 17 for px, py in placed): break
         best = None
@@ -224,7 +208,6 @@ for num, cont, pin in allstories:
     d.text((bx-tw(num, nf)/2, by-5), num, font=nf, fill=PAPER)
 d.rectangle([MAPX0, MAPY0, MAPX1, MAPY1], outline=RULE, width=1)
 
-# ---------- also-on list ----------
 ly = MAPY1 + 12
 d.text((36, ly), "ALSO ON TUESDAY", font=F("sansb", 15), fill=INK)
 hline(ly+20, w=1)
@@ -239,7 +222,6 @@ for idx, (num, cont, head, pin) in enumerate(LIST):
     for j, ln in enumerate(wrap(head, lf, cw-24)[:1]):
         d.text((x+24, y+11), ln, font=lf, fill=INK)
 
-# ---------- footer ----------
 fy = 884
 hline(fy, w=2)
 d.text((36, fy+6), "DATE CHECK", font=F("sansb", 12), fill=RED)
